@@ -12,8 +12,8 @@ readme = "crates-io.md"
 rust-version = "1.60"
 
 [dependencies]
-bevy_math = "0.15"
-bevy_transform = "0.15"
+bevy_math = "0.16.0-rc.3"
+bevy_transform = "^0.16.0-rc.3"
 #glam = ">=0.21, <=0.24"
 
 [dev-dependencies]

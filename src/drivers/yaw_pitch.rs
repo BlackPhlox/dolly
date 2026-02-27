@@ -1,10 +1,21 @@
-use std::marker::PhantomData;
+//use std::marker::PhantomData;
 
-use glam::{EulerRot, Quat};
+//use glam::{EulerRot, Quat};
 
+use bevy_math::{
+    EulerRot,
+    //Vec3
+    Quat,
+};
+use bevy_transform::prelude::Transform;
+
+use crate::{driver::RigDriver, rig::RigUpdateParams};
+
+/*
 use crate::{
     driver::RigDriver, handedness::Handedness, rig::RigUpdateParams, transform::Transform,
 };
+*/
 
 /// Calculate camera rotation based on yaw and pitch angles.
 ///
@@ -46,7 +57,7 @@ impl YawPitch {
     /// Any roll rotation will be ignored.
     pub fn rotation_quat<Q>(mut self, rotation: Q) -> Self
     where
-        Q: Into<mint::Quaternion<f32>>,
+        Q: Into<Quat>,
     {
         self.set_rotation_quat(rotation);
         self
@@ -74,28 +85,26 @@ impl YawPitch {
     /// Any roll rotation will be ignored.
     pub fn set_rotation_quat<Q>(&mut self, rotation: Q)
     where
-        Q: Into<mint::Quaternion<f32>>,
+        Q: Into<Quat>,
     {
-        let rotation: Quat = rotation.into().into();
+        let rotation: Quat = rotation.into();
         let (yaw, pitch, _) = rotation.to_euler(EulerRot::YXZ);
         self.yaw_degrees = yaw.to_degrees();
         self.pitch_degrees = pitch.to_degrees();
     }
 }
 
-impl<H: Handedness> RigDriver<H> for YawPitch {
-    fn update(&mut self, params: RigUpdateParams<H>) -> Transform<H> {
-        let rotation = Quat::from_euler(
-            EulerRot::YXZ,
-            self.yaw_degrees.to_radians(),
-            self.pitch_degrees.to_radians(),
-            0.0,
-        );
-
+impl RigDriver for YawPitch {
+    fn update(&mut self, params: RigUpdateParams) -> Transform {
         Transform {
-            position: params.parent.position,
-            rotation: rotation.into(),
-            phantom: PhantomData,
+            translation: params.parent.translation,
+            rotation: Quat::from_euler(
+                EulerRot::YXZ,
+                self.yaw_degrees.to_radians(),
+                self.pitch_degrees.to_radians(),
+                0.0,
+            ),
+            scale: Default::default(),
         }
     }
 }

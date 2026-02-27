@@ -1,7 +1,12 @@
-use std::marker::PhantomData;
+//use std::marker::PhantomData;
+
+use bevy_transform::prelude::Transform;
 
 use crate::{
-    driver::RigDriver, handedness::Handedness, rig::RigUpdateParams, transform::Transform,
+    driver::RigDriver,
+    //handedness::Handedness,
+    rig::RigUpdateParams,
+    //transform::Transform,
 };
 
 /// Locks/constrains the position of the camera to one or more axes
@@ -52,16 +57,16 @@ impl Default for LockPosition {
     }
 }
 
-impl<H: Handedness> RigDriver<H> for LockPosition {
-    fn update(&mut self, params: RigUpdateParams<H>) -> Transform<H> {
-        let mut delta_pos = params.parent.position;
+impl RigDriver for LockPosition {
+    fn update(&mut self, params: RigUpdateParams) -> Transform {
+        let mut delta_pos = params.parent.translation;
         delta_pos.x = self.x.unwrap_or(delta_pos.x);
         delta_pos.y = self.y.unwrap_or(delta_pos.y);
         delta_pos.z = self.z.unwrap_or(delta_pos.z);
         Transform {
-            position: delta_pos,
+            translation: delta_pos,
             rotation: params.parent.rotation,
-            phantom: PhantomData,
+            ..Default::default()
         }
     }
 }

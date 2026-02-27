@@ -1,5 +1,6 @@
 use core::fmt::Debug;
-use glam::{Quat, Vec3};
+//use glam::{Quat, Vec3};
+use bevy_math::{Quat, Vec3};
 use std::marker::PhantomData;
 
 use crate::handedness::Handedness;

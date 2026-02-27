@@ -1,12 +1,14 @@
-use std::marker::PhantomData;
+//use std::marker::PhantomData;
 
-use glam::{Quat, Vec3};
+//use glam::{Quat, Vec3};
+use bevy_math::{Quat, Vec3};
+use bevy_transform::prelude::Transform;
 
 use crate::{
     driver::RigDriver,
-    handedness::Handedness,
+    //handedness::Handedness,
     rig::RigUpdateParams,
-    transform::Transform,
+    //transform::Transform,
     util::{ExpSmoothed, ExpSmoothingParams},
 };
 
@@ -79,13 +81,10 @@ impl Smooth {
     }
 }
 
-impl<H: Handedness> RigDriver<H> for Smooth {
-    fn update(&mut self, params: RigUpdateParams<H>) -> Transform<H> {
-        let parent_position = From::from(params.parent.position);
-        let parent_rotation = From::from(params.parent.rotation);
-
-        let position = self.smoothed_position.exp_smooth_towards(
-            &parent_position,
+impl RigDriver for Smooth {
+    fn update(&mut self, params: RigUpdateParams) -> Transform {
+        let translation = self.smoothed_position.exp_smooth_towards(
+            &params.parent.translation,
             ExpSmoothingParams {
                 smoothness: self.position_smoothness,
                 output_offset_scale: self.output_offset_scale,
@@ -94,7 +93,7 @@ impl<H: Handedness> RigDriver<H> for Smooth {
         );
 
         let rotation = self.smoothed_rotation.exp_smooth_towards(
-            &parent_rotation,
+            &params.parent.rotation,
             ExpSmoothingParams {
                 smoothness: self.rotation_smoothness,
                 output_offset_scale: self.output_offset_scale,
@@ -103,9 +102,9 @@ impl<H: Handedness> RigDriver<H> for Smooth {
         );
 
         Transform {
-            position: position.into(),
-            rotation: rotation.into(),
-            phantom: PhantomData,
+            translation,
+            rotation,
+            scale: Vec3::ONE,
         }
     }
 }

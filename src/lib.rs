@@ -11,9 +11,9 @@
 //!
 //! ```
 //! use dolly::prelude::*;
-
+//! use bevy_math::Vec3;
 //! let mut camera: CameraRig = CameraRig::builder()
-//!     .with(Position::new(glam::Vec3::ZERO))
+//!     .with(Position::new(Vec3::ZERO))
 //!     .with(YawPitch::new())
 //!     .with(Smooth::new_position_rotation(1.0, 1.0))
 //!     .build();
@@ -36,5 +36,7 @@ pub mod drivers;
 pub mod handedness;
 pub mod prelude;
 pub mod rig;
-pub mod transform;
+//pub mod transform;
 pub mod util;
+
+//pub use glam;
